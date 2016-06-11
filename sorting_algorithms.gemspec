@@ -1,11 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'sorting_algorithms/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'sorting_algorithms'
-  spec.version       = SortingAlgorithms::VERSION
+  spec.version       = '1.0.0'
   spec.authors       = ['Matt Blewitt']
   spec.email         = ['blewitt.matt@gmail.com']
 
@@ -26,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'rubocop', '~> 0.40.0'
+  spec.add_development_dependency 'benchmark-ips'
 end
