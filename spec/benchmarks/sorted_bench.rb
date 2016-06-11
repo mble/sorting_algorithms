@@ -7,5 +7,6 @@ data = [*0..1_000_000]
 Benchmark.ips do |x|
   x.report('mergesort') { data.mergesort }
   x.report('quicksort') { data.quicksort }
+  x.report('parallel_quicksort') { data.parallel_quicksort }
   x.compare!
 end
