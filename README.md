@@ -1,7 +1,9 @@
 # Sorting Algorithms
 
 A collection of sorting algorithms implemented in Ruby, with tests and 
-benchmarks against http://bigocheatsheet.com/
+benchmarks. Ruby's native `Array#sort` method is excluded from this 
+(being almost 30x faster than the quicksort implementation). Complexity
+analysis from http://bigocheatsheet.com
 
 ## Contributing
 
