@@ -1,0 +1,9 @@
+[package]
+name = 'rustsort'
+version = '0.1.0'
+authors = ['Matt Blewitt <matt@starfighterpilot.com>']
+
+
+[lib]
+name = 'rustsort'
+crate-type = ['dylib']
