@@ -16,19 +16,14 @@ module SortingAlgorithms
       end
     end
 
-    attach_function :sum, [:int32, :int32], :int32
-    attach_function :number_to_int_array, [], RustArray.by_value
     attach_function :array_pass, [:pointer, :size_t], RustArray.by_value
+    attach_function :rustsort, [:pointer, :size_t], RustArray.by_value
 
-    def magic_array
-      number_to_int_array.to_a
-    end
-
-    def sum_evens
+    def rust_sort
       arr = dup
-      buf = FFI::MemoryPointer.new(:uint64, arr.size)
-      buf.write_array_of_uint64(arr)
-      sum_of_even(buf, arr.size)
+      buf = FFI::MemoryPointer.new :int32, arr.size
+      buf.write_array_of_int32(arr)
+      rustsort(buf, arr.size)
     end
 
     def array_pass_test

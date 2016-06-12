@@ -10,14 +10,6 @@ pub struct RubyArray {
 }
 
 impl RubyArray {
-    fn from_vec<T>(vec: Vec<T>) -> RubyArray {
-        let array = RubyArray {
-            data: vec.as_ptr() as *const libc::c_void,
-            len: vec.len() as libc::size_t };
-        mem::forget(vec);
-        array
-    }
-
     fn from_slice<T>(slice: &[T], len: libc::size_t) -> RubyArray {
         let array = RubyArray {
             data: slice.as_ptr() as *const libc::c_void,
@@ -26,38 +18,70 @@ impl RubyArray {
         mem::forget(len);
         array
     }
+
+    fn from_vec<T>(vec: Vec<T>) -> RubyArray {
+        let array = RubyArray {
+            data: vec.as_ptr() as *const libc::c_void,
+            len: vec.len() as libc::size_t };
+        mem::forget(vec);
+        array
+    }
 }
 
 #[no_mangle]
 pub extern fn array_pass(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
-    let mut nums: Vec<&i32> = vec![];
     let numbers = unsafe {
         assert!(!n.is_null());
         slice::from_raw_parts(n, len as usize)
     };
-    for i in numbers {
-        nums.push(i);
-    }
-    println!("{:?}", nums);
     RubyArray::from_slice(numbers, len)
 }
 
-#[no_mangle]
-pub extern fn number_to_int_array() -> RubyArray {
-    let mut nums: Vec<i32> = vec![];
+type OrderFunc<T> = Fn(&T, &T) -> bool;
 
-    for i in 33..136 {
-        nums.push(i);
+#[inline(always)]
+fn is_less<T: Ord>(x: &T, y: &T) -> bool {
+    x < y
+}
+
+#[no_mangle]
+pub extern fn rustsort(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
+    let numbers = unsafe {
+        assert!(!n.is_null());
+        slice::from_raw_parts(n, len as usize)
+    };
+    let mut mutable_numbers = numbers.to_owned();;
+    quick_sort(&mut mutable_numbers, &is_less);
+
+    RubyArray::from_vec(mutable_numbers)
+}
+
+fn quick_sort<T>(v: &mut [T], f: &OrderFunc<T>) {
+    let len = v.len();
+    if len < 2 {
+        return;
     }
-    RubyArray::from_vec(nums)
+
+    let pivot_index = partition(v, f);
+    quick_sort(&mut v[0..pivot_index], f);
+    quick_sort(&mut v[pivot_index + 1..len], f);
 }
 
-#[no_mangle]
-pub extern fn sum(x: i32, y: i32) -> i32 {
-    x + y
+fn partition<T>(v: &mut [T], f: &OrderFunc<T>) -> usize {
+    let len = v.len();
+    let pivot_index = len / 2;
+
+    v.swap(pivot_index, len - 1);
+
+    let mut store_index = 0;
+    for i in 0..len - 1 {
+        if f(&v[i], &v[len - 1]) {
+            v.swap(i, store_index);
+            store_index += 1;
+        }
+    }
+
+    v.swap(store_index, len - 1);
+    store_index
 }
 
-#[test]
-fn it_works() {
-    assert_eq!(sum(1, 2), 3);
-}
