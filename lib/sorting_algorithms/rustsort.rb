@@ -23,7 +23,7 @@ module SortingAlgorithms
       arr = dup
       buf = FFI::MemoryPointer.new :int32, arr.size
       buf.write_array_of_int32(arr)
-      rustsort(buf, arr.size)
+      rustsort(buf, arr.size).to_a
     end
 
     def array_pass_test
