@@ -8,4 +8,5 @@ class Array
   include SortingAlgorithms::Quicksort
   include SortingAlgorithms::Mergesort
   include SortingAlgorithms::ParallelQuicksort
+  include SortingAlgorithms::Rustsort
 end

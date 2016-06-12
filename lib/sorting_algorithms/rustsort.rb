@@ -7,14 +7,44 @@ module SortingAlgorithms
   module Rustsort
     extend FFI::Library
     ffi_lib './target/release/librustsort.dylib'
+    class RustArray < FFI::Struct
+      layout :len,  :size_t,
+             :data, :pointer
 
-    class TwoNumbers < FFI::Struct
-      layout :first, :int32,
-             :second, :int32
+      def to_a
+        self[:data].get_array_of_int(0, self[:len]).compact
+      end
     end
 
-    attach_function :add_one_to_vals, [TwoNumbers.by_value], TwoNumbers.by_value
-    attach_function :add_struct_vals, [TwoNumbers.by_value], :int32
     attach_function :sum, [:int32, :int32], :int32
+    attach_function :number_to_int_array, [], RustArray.by_value
+    attach_function :array_pass, [:pointer, :size_t], RustArray.by_value
+
+    def magic_array
+      number_to_int_array.to_a
+    end
+
+    def sum_evens
+      arr = dup
+      buf = FFI::MemoryPointer.new(:uint64, arr.size)
+      buf.write_array_of_uint64(arr)
+      sum_of_even(buf, arr.size)
+    end
+
+    def array_pass_test
+      arr = dup
+      buf = FFI::MemoryPointer.new :int32, arr.size
+      buf.write_array_of_int32(arr)
+      array_pass(buf, arr.size)
+    end
+
+   # def rustsort
+   #   arr = dup
+   #   size = arr.size
+   #   offset = 0
+   #   pointer = FFI::MemoryPointer.new :int32, size
+   #   pointer.put_array_of_int32 offset, arr
+   #   sort_in_rust(pointer).to_a
+   # end
   end
 end

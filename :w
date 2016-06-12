@@ -17,29 +17,44 @@ impl RubyArray {
         mem::forget(vec);
         array
     }
+}
 
-    fn from_slice<T>(slice: &[T], len: libc::size_t) -> RubyArray {
-        let array = RubyArray {
-            data: slice.as_ptr() as *const libc::c_void,
-            len: len as libc::size_t };
-        mem::forget(slice);
-        mem::forget(len);
-        array
+#[no_mangle]
+pub extern fn sum_of_even(n: *const libc::uint32_t, len: libc::size_t) -> libc::uint32_t {
+    let numbers = unsafe {
+        assert!(!n.is_null());
+
+        slice::from_raw_parts(n, len as usize)
+    };
+
+    let sum =
+        numbers.iter()
+        .filter(|&v| v % 2 == 0)
+        .fold(0, |acc, v| acc + v);
+    sum as libc::uint32_t
+}
+
+#[no_mangle]
+pub extern fn array_pass(n: *const libc::uint32_t, len: libc::size_t) {
+    let numbers = unsafe {
+        assert!(!n.is_null());
+
+        slice::from_raw_parts(n, len as usize)
+    };
+    for i in numbers.iter() {
+        println!("{:?}", i);
     }
 }
 
 #[no_mangle]
-pub extern fn array_pass(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
-    let mut nums: Vec<&i32> = vec![];
-    let numbers = unsafe {
-        assert!(!n.is_null());
-        slice::from_raw_parts(n, len as usize)
-    };
-    for i in numbers {
-        nums.push(i);
+pub extern fn sort_in_rust(nums: &[i32]) -> RubyArray {
+    let mut nums2: Vec<&i32> = vec![];
+
+    for i in nums {
+        println!("{}", i);
+        nums2.push(i);
     }
-    println!("{:?}", nums);
-    RubyArray::from_slice(numbers, len)
+    RubyArray::from_vec(nums2)
 }
 
 #[no_mangle]
