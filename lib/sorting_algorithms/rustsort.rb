@@ -6,7 +6,16 @@ module SortingAlgorithms
   # @return [Array] the sorted array
   module Rustsort
     extend FFI::Library
-    ffi_lib './target/release/librustsort.dylib'
+    ffi_lib begin
+      pre = Gem.win_platform? ? '' : 'lib'
+      suffix = FFI::Platform::LIBSUFFIX
+      dirname = File.dirname(__FILE__)
+      target = '../../target/release/'
+      "#{File.expand_path(target, dirname)}/#{pre}rustsort.#{suffix}"
+    end
+
+    ##
+    # Struct to handle marshalling data from Rust
     class RustArray < FFI::Struct
       layout :len,  :size_t,
              :data, :pointer
@@ -16,30 +25,21 @@ module SortingAlgorithms
       end
     end
 
-    attach_function :array_pass, [:pointer, :size_t], RustArray.by_value
-    attach_function :rustsort, [:pointer, :size_t], RustArray.by_value
+    ##
+    # Attach a function that hooks into the Rust library
+    attach_function :rust_sort, # Name
+                    :rustsort, # Rust function
+                    [:pointer, :size_t], # Args
+                    RustArray.by_value # Return
 
-    def rust_sort
+    ##
+    # Dup the array, create a pointer containing the array data
+    # then pass the pointer over to Rust to let the magic happen
+    def rustsort
       arr = dup
       buf = FFI::MemoryPointer.new :int32, arr.size
       buf.write_array_of_int32(arr)
-      rustsort(buf, arr.size).to_a
+      rust_sort(buf, arr.size).to_a
     end
-
-    def array_pass_test
-      arr = dup
-      buf = FFI::MemoryPointer.new :int32, arr.size
-      buf.write_array_of_int32(arr)
-      array_pass(buf, arr.size)
-    end
-
-   # def rustsort
-   #   arr = dup
-   #   size = arr.size
-   #   offset = 0
-   #   pointer = FFI::MemoryPointer.new :int32, size
-   #   pointer.put_array_of_int32 offset, arr
-   #   sort_in_rust(pointer).to_a
-   # end
   end
 end

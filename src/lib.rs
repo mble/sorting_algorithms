@@ -1,4 +1,3 @@
-#![feature(libc)]
 extern crate libc;
 use std::mem;
 use std::slice;
@@ -10,15 +9,6 @@ pub struct RubyArray {
 }
 
 impl RubyArray {
-    fn from_slice<T>(slice: &[T], len: libc::size_t) -> RubyArray {
-        let array = RubyArray {
-            data: slice.as_ptr() as *const libc::c_void,
-            len: len as libc::size_t };
-        mem::forget(slice);
-        mem::forget(len);
-        array
-    }
-
     fn from_vec<T>(vec: Vec<T>) -> RubyArray {
         let array = RubyArray {
             data: vec.as_ptr() as *const libc::c_void,
@@ -26,15 +16,6 @@ impl RubyArray {
         mem::forget(vec);
         array
     }
-}
-
-#[no_mangle]
-pub extern fn array_pass(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
-    let numbers = unsafe {
-        assert!(!n.is_null());
-        slice::from_raw_parts(n, len as usize)
-    };
-    RubyArray::from_slice(numbers, len)
 }
 
 type OrderFunc<T> = Fn(&T, &T) -> bool;

@@ -2,8 +2,11 @@
 name = 'rustsort'
 version = '0.1.0'
 authors = ['Matt Blewitt <matt@starfighterpilot.com>']
-
+license = 'MIT'
 
 [lib]
 name = 'rustsort'
 crate-type = ['dylib']
+
+[dependencies]
+libc = '0.2.11'
