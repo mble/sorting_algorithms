@@ -20,7 +20,7 @@ desc 'clean up target directory'
 task :clean_lib do
   puts 'Cleaning up...'
   FileUtils.rm_rf Dir.glob('target/release/*')
-                  .keep_if { |f| !f[/\.(?:dylib|so|dll)\z/] }
+                     .keep_if { |f| !f[/\.(?:dylib|so|dll)\z/] }
 end
 
 desc 'build and cleanup'

@@ -12,7 +12,8 @@ impl RubyArray {
     fn from_vec<T>(vec: Vec<T>) -> RubyArray {
         let array = RubyArray {
             data: vec.as_ptr() as *const libc::c_void,
-            len: vec.len() as libc::size_t };
+            len: vec.len() as libc::size_t,
+        };
         mem::forget(vec);
         array
     }
@@ -26,7 +27,7 @@ fn is_less<T: Ord>(x: &T, y: &T) -> bool {
 }
 
 #[no_mangle]
-pub extern fn rustsort(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
+pub extern "C" fn rustsort(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
     let numbers = unsafe {
         assert!(!n.is_null());
         slice::from_raw_parts(n, len as usize)
@@ -65,4 +66,3 @@ fn partition<T>(v: &mut [T], f: &OrderFunc<T>) -> usize {
     v.swap(store_index, len - 1);
     store_index
 }
-
