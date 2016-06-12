@@ -1,9 +1,13 @@
 # Sorting Algorithms
 
+[![Build 
+Status](https://travis-ci.org/mble/sorting_algorithms.svg?branch=master)](https://travis-ci.org/mble/sorting_algorithms)
+
 A collection of sorting algorithms implemented in Ruby, with tests and 
-benchmarks. Ruby's native `Array#sort` method is excluded from this 
-(being almost 30x faster than the quicksort implementation). Complexity
-analysis from http://bigocheatsheet.com
+benchmarks. Complexity analysis from http://bigocheatsheet.com
+
+There is also a quicksort implementation in Rust. The latest Rust 
+nightly is required.
 
 ## Contributing
 
