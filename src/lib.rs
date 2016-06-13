@@ -27,12 +27,26 @@ fn is_less<T: Ord>(x: &T, y: &T) -> bool {
 }
 
 #[no_mangle]
+pub extern "C" fn rustmergesort(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
+    let numbers = unsafe {
+        assert!(!n.is_null());
+        slice::from_raw_parts(n, len as usize)
+    };
+    let mut mutable_numbers = numbers.to_owned();
+    mutable_numbers.sort(); // This is an insertion sort for a small vec
+                            // but a merge sort for larger vecs
+                            // https://github.com/rust-lang/rust/blob/master/src/libcollections/slice.rs#L1085
+
+    RubyArray::from_vec(mutable_numbers)
+}
+
+#[no_mangle]
 pub extern "C" fn rustsort(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
     let numbers = unsafe {
         assert!(!n.is_null());
         slice::from_raw_parts(n, len as usize)
     };
-    let mut mutable_numbers = numbers.to_owned();;
+    let mut mutable_numbers = numbers.to_owned();
     quick_sort(&mut mutable_numbers, &is_less);
 
     RubyArray::from_vec(mutable_numbers)

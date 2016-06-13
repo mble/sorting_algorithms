@@ -1,12 +1,9 @@
-require 'spec_helper'
+require 'sorting_algorithms/shared'
+
 module SortingAlgorithms
   describe Quicksort do
     context '#quicksort' do
-      it 'correctly sorts the array' do
-        arr = []
-        rand(5..30).times { arr << rand(1000) }
-        expect(arr.quicksort).to eq arr.sort
-      end
+      it_behaves_like 'a sorting algorithm', :quicksort
     end
   end
 end

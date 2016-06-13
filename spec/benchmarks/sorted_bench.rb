@@ -9,5 +9,6 @@ Benchmark.ips do |x|
   x.report('Array#mergesort') { data.mergesort }
   x.report('Array#quicksort') { data.quicksort }
   x.report('Array#rustsort') { data.rustsort }
+  x.report('Array#rustmergesort') { data.rustmergesort }
   x.compare!
 end
