@@ -1,24 +1,10 @@
 extern crate libc;
 mod quick_sort;
-use std::{mem, slice};
+mod ruby_array;
+
+use std::slice;
 use quick_sort::quick_sort;
-
-#[repr(C)]
-pub struct RubyArray {
-    len: libc::size_t,
-    data: *const libc::c_void,
-}
-
-impl RubyArray {
-    fn from_vec<T>(vec: Vec<T>) -> RubyArray {
-        let array = RubyArray {
-            data: vec.as_ptr() as *const libc::c_void,
-            len: vec.len() as libc::size_t,
-        };
-        mem::forget(vec);
-        array
-    }
-}
+use ruby_array::RubyArray;
 
 #[no_mangle]
 pub extern "C" fn rustmergesort(n: *const libc::int32_t, len: libc::size_t) -> RubyArray {
