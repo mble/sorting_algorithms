@@ -1,4 +1,4 @@
-pub type OrderFunc<T> = Fn(&T, &T) -> bool;
+pub type OrderFunc<T> = dyn Fn(&T, &T) -> bool;
 
 pub fn quick_sort<T>(v: &mut [T], f: &OrderFunc<T>) {
     let len = v.len();
